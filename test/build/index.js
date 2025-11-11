@@ -60,6 +60,24 @@ server.registerResource("apartment-list", "rules://all", {
         ],
     };
 });
+server.registerPrompt("explain-sql", {
+    description: "Resource for all apartment rules",
+    argsSchema: {
+        sql: z.string().describe("The Sql query"),
+    },
+}, ({ sql }) => {
+    return {
+        messages: [
+            {
+                role: "user",
+                content: {
+                    type: "text",
+                    text: `Give me a detailed explantation of the following SQL query in plain Polish ${sql}`,
+                },
+            },
+        ],
+    };
+});
 async function main() {
     const transport = new StdioServerTransport();
     await server.connect(transport);
