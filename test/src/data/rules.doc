@@ -1,0 +1,6 @@
+{
+    id: 1,
+    category: "Parking",
+    rule: "Use only your assigned parking space",
+    description: "Unauthorized vehicles in assigned spots will be towed at owner's expense"
+}

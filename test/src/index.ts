@@ -1,6 +1,9 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import * as fs from "fs/promises";
+import * as path from "path";
+import { fileURLToPath } from "url";
 
 const server = new McpServer({
   name: "first-mcp",
@@ -51,6 +54,34 @@ server.tool(
         {
           type: "text",
           text: `Github repositories for ${username}: (${repos.length} repos): \n\n ${repoosList}`,
+        },
+      ],
+    };
+  }
+);
+
+server.registerResource(
+  "apartment-list",
+  "rules://all",
+  {
+    description: "Resource for all apartment rules",
+    mimeType: "text/plain",
+  },
+  async (uri) => {
+    const uriString = uri.toString();
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const rules = await fs.readFile(
+      path.resolve(__dirname, "../src/data/rules.doc"),
+      "utf-8"
+    );
+
+    return {
+      contents: [
+        {
+          uri: uriString,
+          mimeType: "text/plain",
+          text: rules,
         },
       ],
     };
