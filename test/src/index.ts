@@ -27,14 +27,32 @@ server.tool(
 
 server.tool(
   "get_github_repos",
-  "Add two numbers",
+  "Get github repositories from the given username",
   {
-    a: z.number().describe("Frist number"),
-    b: z.number().describe("Frist number"),
+    username: z.string().describe("Username"),
   },
-  ({ a, b }) => {
+  async ({ username }) => {
+    const res = await fetch(`https://api.github.com/users/${username}/repos`, {
+      headers: { "User-Agent": "MCP-Server" },
+    });
+
+    if (!res.ok) {
+      throw new Error("Github API error");
+    }
+
+    const repos = await res.json();
+
+    const repoosList = repos
+      .map((repo: any, i: number) => `${i + 1}. ${repo.name}`)
+      .join("\n\n");
+
     return {
-      content: [{ type: "text", text: `Total is ${a + b}` }],
+      content: [
+        {
+          type: "text",
+          text: `Github repositories for ${username}: (${repos.length} repos): \n\n ${repoosList}`,
+        },
+      ],
     };
   }
 );
